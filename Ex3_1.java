@@ -53,14 +53,6 @@ class Player {
 }
 
 
-public class Client{
-
-}
-
-public class Server{
-
-}
-
 public class Ex3_1 {
     public static void main(String[] args) {
         Team team = new Team("Team A");
