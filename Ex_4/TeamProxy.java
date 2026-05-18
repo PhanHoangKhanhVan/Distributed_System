@@ -1,44 +1,46 @@
-package ex_1;
+// TeamProxy.java
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 public class TeamProxy {
-    private String teamId;
-    private String host = "localhost";
-    private int port = 1234;
+    private int teamId;        // 1 hoặc 2 — để server biết dùng object nào
+    private String serverHost;
+    private int serverPort;
 
-    public TeamProxy(String id) { this.teamId = id; }
-
-    public String getName() {
-        return sendRequest("getName", "");
+    public TeamProxy(int teamId, String serverHost, int serverPort) {
+        this.teamId = teamId;
+        this.serverHost = serverHost;
+        this.serverPort = serverPort;
     }
 
-    public void addPlayer(String n, String p, int a) {
-        sendRequest("addPlayer", n + "," + p + "," + a);
+    // Hàm nội bộ: gửi request string, nhận response string
+    private String sendRequest(String request) throws IOException {
+        Socket s = new Socket(serverHost, serverPort);
+        DataOutputStream out = new DataOutputStream(s.getOutputStream());
+        DataInputStream in   = new DataInputStream(s.getInputStream());
+
+        out.writeUTF(request);           // Gửi encoded string
+        String response = in.readUTF();  // Nhận kết quả
+        s.close();
+        return response;
     }
 
-    public Set<Player> getPlayers() {
-        String response = sendRequest("getPlayers", "");
-        Set<Player> set = new HashSet<>();
-        if (response.isEmpty()) return set;
-        
-        // Giả sử server trả về: "Name1,Pos1,Age1;Name2,Pos2,Age2"
-        String[] playersData = response.split(";");
-        for (String data : playersData) {
-            String[] p = data.split(",");
-            set.add(new Player(p[0], p[1], Integer.parseInt(p[2])));
-        }
-        return set;
+    // Các method có cùng signature với Team:
+
+    public String addPlayer(String playerName) throws IOException {
+        // Format: "teamId|addPlayer|playerName"
+        return sendRequest(teamId + "|addPlayer|" + playerName);
     }
 
-    private String sendRequest(String method, String params) {
-        try (Socket s = new Socket(host, port);
-             PrintWriter out = new PrintWriter(s.getOutputStream(), true);
-             BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()))) {
-            
-            out.println(teamId + method + "#" + params);
-            return in.readLine();
-        } catch (Exception e) { return ""; }
+    public String removePlayer(String playerName) throws IOException {
+        return sendRequest(teamId + "|removePlayer|" + playerName);
+    }
+
+    public String getPlayers() throws IOException {
+        return sendRequest(teamId + "|getPlayers");
+    }
+
+    public String getName() throws IOException {
+        return sendRequest(teamId + "|getName");
     }
 }

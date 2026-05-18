@@ -1,24 +1,37 @@
-package Ex_4;
-import java.util.*;
+// Team.java
+import java.util.ArrayList;
+import java.util.List;
 
 public class Team {
     private String name;
-    private Set<Player> players = new HashSet<>();
+    private List<String> players = new ArrayList<>();
 
-    public Team(String name) { this.name = name; }
-
-    public String getName() { return name; }
-
-    public void addPlayer(String name, String pos, int age) {
-        players.add(new Player(name, pos, age));
+    public Team(String name) {
+        this.name = name;
     }
 
-    public Player searchPlayer(String name) {
-        for (Player p : players) {
-            if (p.getName().equalsIgnoreCase(name)) return p;
+    // Method 1: Thêm cầu thủ
+    public String addPlayer(String playerName) {
+        players.add(playerName);
+        return "OK: " + playerName + " added to " + name;
+    }
+
+    // Method 2: Xóa cầu thủ
+    public String removePlayer(String playerName) {
+        if (players.remove(playerName)) {
+            return "OK: " + playerName + " removed from " + name;
         }
-        return null;
+        return "ERROR: " + playerName + " not found in " + name;
     }
 
-    public Set<Player> getPlayers() { return players; }
+    // Method 3: Lấy danh sách cầu thủ
+    public String getPlayers() {
+        if (players.isEmpty()) return name + ": (no players)";
+        return name + ": " + String.join(", ", players);
+    }
+
+    // Method 4: Lấy tên đội
+    public String getName() {
+        return name;
+    }
 }

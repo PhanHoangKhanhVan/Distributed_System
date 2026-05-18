@@ -1,4 +1,3 @@
-package ex_1;
 import java.util.Set;
 
 public class Client {
