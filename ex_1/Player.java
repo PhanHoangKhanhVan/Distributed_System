@@ -1,5 +1,3 @@
-package ex_1;
-
 public class Player {
     private String name;
     private String position;
